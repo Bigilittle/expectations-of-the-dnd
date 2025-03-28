@@ -1,0 +1,119 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: linear-gradient(to bottom right, white, orange);
+  min-height: 100vh;
+}
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.attack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.attack-block {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.field-row input,
+.field-row select {
+  flex: 1;
+  padding: 8px;
+  font-size: 1rem;
+}
+
+.checkbox {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-field-btn,
+.add-btn,
+.send-btn {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff8c00;
+  color: white;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.add-field-btn:hover,
+.add-btn:hover,
+.send-btn:hover {
+  background-color: #e57700;
+}
+
+.add-wrapper,
+.send-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+
+.damage-row {
+  align-items: center;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #cc0000;
+  transition: color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #ff0000;
+}
+
+
+.attack-meta {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
+}
+
+.attack-meta select,
+.attack-meta input[type="number"] {
+  padding: 8px;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.checkbox {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
