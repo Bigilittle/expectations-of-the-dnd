@@ -1,107 +1,133 @@
-import ast
 from collections import Counter
 from itertools import product
-###############################
-## ПРЕВРАЩАЕТ 1d2+1 В [2, 3] ##
-###############################
-def dice_to_values(dice_string): 
-    dice_string = str(dice_string)
-    if 'd' in dice_string:              # ПРОВЕРЯЕМ ЭТО КУБИК ИЛИ ЧИСЛО
-        parts = dice_string.split('d')
-        dice_count = int(parts[0])
-        remaining = parts[1]
-        additional = 0
-        if '+' in remaining:
-            dice_shapes, add = remaining.split('+')
-            additional = int(add)
-        elif '-' in remaining:
-            dice_shapes, sub = remaining.split('-')
-            additional = -int(sub)
-        else:   
-            dice_shapes = remaining
-        dice_shapes = int(dice_shapes)
+from typing import List, Dict, Tuple
+from pydantic import BaseModel
 
-        single_die = [i + additional for i in range(1, dice_shapes + 1)]    # МОМЕНТ ПРЕВРАЩЕНИЯ
-        return dice_multiply(single_die, dice_count)
-    else:
+
+class InputCasts(BaseModel):
+    vulnerability: List[str]  # Уязвимость
+    ordinary: List[str]       # Обычные значения
+    stability: List[str]      # Сопротивление
+    modifier: int             # Общий модификатор
+
+
+class OutputCasts(BaseModel):
+    vulnerability: Dict[str, Dict[int, float]]
+    ordinary: Dict[str, Dict[int, float]]
+    stability: Dict[str, Dict[int, float]]
+    all: Dict[int, float]
+
+
+def dice_to_values(dice_string: str) -> List[int]:
+    """
+    Разворачивает строку кубика (например, '1d6+1') в список всех возможных значений.
+    """
+    dice_string = str(dice_string)
+
+    if 'd' not in dice_string:
         return [int(dice_string)]
 
-###################################
-## ПРЕВРАЩАЕТ 2d2 В [1, 2, 3 ,4] ##
-###################################
+    parts = dice_string.split('d')
+    dice_count = int(parts[0])
+    remaining = parts[1]
 
-def dice_multiply(values, count):
+    additional = 0
+    if '+' in remaining:
+        dice_shapes, add = remaining.split('+')
+        additional = int(add)
+    elif '-' in remaining:
+        dice_shapes, sub = remaining.split('-')
+        additional = -int(sub)
+    else:
+        dice_shapes = remaining
+
+    dice_shapes = int(dice_shapes)
+    single_die = [i + additional for i in range(1, dice_shapes + 1)]
+
+    return dice_multiply(single_die, dice_count)
+
+
+def dice_multiply(values: List[int], count: int) -> List[int]:
+    """
+    Генерирует все возможные суммы при многократном броске кубика.
+    """
     if count == 1:
         return values
+
     result = []
     for x in values:
         for y in dice_multiply(values, count - 1):
             result.append(x + y)
+
     return result
 
-####################################
-## ПРЕВРАЩАЕТ [2, 3] В 2: 0.5 ##
-####################################
 
-def calculate_distribution(values): 
+def calculate_distribution(values: List[int]) -> Dict[int, float]:
+    """
+    Строит вероятностное распределение значений.
+    """
     total = len(values)
-    return {v: round(count/total, 2) for v, count in Counter(values).items()} # Counter -> [2, 2, 3] ПРЕВРАЩАЕТ В [2:2, 3:1]
+    return {
+        v: round(count / total, 2)
+        for v, count in Counter(values).items()
+    }
 
-def process_component(component_list): #СОЗДАЕТ РАСПРЕДЕЛЕНИЕ [2, 3] -> [2: 0.5, 3: 0.5 ] И КУБИКИ ПРЕВРАЩАЕТ В ЗНАЧЕНИЯ
-    distributions = {}
-    combined = []
+
+def process_component(component_list: List[str]) -> Tuple[Dict[str, Dict[int, float]], List[int]]:
+    """
+    Обрабатывает список выражений кубиков: возвращает их распределения
+    и все возможные суммы значений.
+    """
+    distributions: Dict[str, Dict[int, float]] = {}
+    combined: List[List[int]] = []
+
     for dice in component_list:
         values = dice_to_values(dice)
         distributions[dice] = calculate_distribution(values)
         combined.append(values)
-    
-    # Calculate combined values for the component
+
     if not combined:
         return distributions, []
-    
+
     result = combined[0]
     for values in combined[1:]:
         result = [x + y for x in result for y in values]
+
     return distributions, result
 
-def main():
-    data = input("GIVE ME DICT AS A STRING: ")
-    input_dict = ast.literal_eval(data)
-    
-    result = {
-        "vulnerability": {},
-        "ordinary": {},
-        "stability": {},
-        "all": {}
-    }
-    
-    # ПОЛУЧАЕМ ЗНАЧЕНИЯ КУБОВ И РАСПРЕДЕЛЕНИЯ
-    vuln_dist, vuln_values = process_component(input_dict["vulnerability"])
-    ord_dist, ord_values = process_component(input_dict["ordinary"])
-    stab_dist, stab_values = process_component(input_dict["stability"])
-    
-    # МНОЖИТЕЛЬ ДЛЯ СТОЙКОСТИ И УЯЗВИМОСТИ
-    vuln_values = [int(x * 2) for x in vuln_values]  
-    stab_values = [x // 2 for x in stab_values]
-    
-    # ЗАГРУЖАЕМ РАСПРЕДЕЛЕНИЯ В СТРОКУ result
-    result["vulnerability"] = {k: {vk: round(vc, 2) for vk, vc in v.items()} for k, v in vuln_dist.items()}
-    result["ordinary"] = {k: {vk: round(vc, 2) for vk, vc in v.items()} for k, v in ord_dist.items()}
-    result["stability"] = {k: {vk: round(vc, 2) for vk, vc in v.items()} for k, v in stab_dist.items()}
-    
-    # СОЗДАЕМ СПИСОК ЗНАЧЕНИЙ ВСЕХ КУБОВ
-    modifier = input_dict["modifier"]
+
+def calculate_distributions(input_dict: InputCasts) -> OutputCasts:
+    """
+    Принимает данные InputCasts, рассчитывает распределения и итоговую модель OutputCasts.
+    """
+    vuln_dist, vuln_values = process_component(input_dict.vulnerability)
+    ord_dist, ord_values = process_component(input_dict.ordinary)
+    stab_dist, stab_values = process_component(input_dict.stability)
+
+    # Преобразования значений
+    vuln_values = [int(x * 2) for x in vuln_values] or [0]
+    stab_values = [x // 2 for x in stab_values] or [0]
+    ord_values = ord_values or [0]  # тоже на всякий случай
+
+    # Итоговые распределения по категориям
+    result = OutputCasts(
+        vulnerability=vuln_dist,
+        ordinary=ord_dist,
+        stability=stab_dist,
+        all={}
+    )
+
+    # Расчёт всех возможных комбинаций
+    modifier = input_dict.modifier
     all_combinations = product(vuln_values, ord_values, stab_values)
-    total = []
-    for combo in all_combinations:
-        total.append(sum(combo) + modifier)
-    
-    # НА ОСНОВЕ ПРЕДЫДУЩЕГО ШАГА СОЗДАЕМ РАСПРЕДЕЛЕНИЕ
+    total = [sum(combo) + modifier for combo in all_combinations]
+
+    # Финальное распределение
     counts = Counter(total)
     total_count = len(total)
-    result["all"] = {k: round(v/total_count, 2) for k, v in counts.items()}
-    
-    print(result)
+    result.all = {
+        k: round(v / total_count, 2)
+        for k, v in counts.items()
+    }
 
-if __name__ == "__main__":
-    main()
+    return result
