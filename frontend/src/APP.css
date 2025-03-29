@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Lora', sans-serif;
   background: linear-gradient(to bottom right, white, orange);
   min-height: 100vh;
 }
@@ -15,6 +15,7 @@ body {
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 20px;
+  font-family: 'ElMessiri', 'Lora' ,sans-serif;
 }
 
 .attack-list {
@@ -37,18 +38,81 @@ body {
 }
 
 .field-row input,
-.field-row select {
+.field-row select,
+.attack-meta input,
+.attack-meta select {
   flex: 1;
-  padding: 8px;
+  padding: 10px 14px;
   font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
 }
 
-.checkbox {
-  margin-top: 10px;
-  font-size: 0.95rem;
-  display: flex;
+.field-row input:focus,
+.field-row select:focus,
+.attack-meta input:focus,
+.attack-meta select:focus {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.3);
+}
+.toggle-switch {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 10px;
+}
+
+/* Скрываем нативный input */
+.toggle-switch input[type="checkbox"] {
+  display: none;
+}
+
+/* Слайдер-переключатель */
+.toggle-switch .slider {
+  width: 40px;
+  height: 22px;
+  background-color: #ccc;
+  border-radius: 999px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+/* Кружочек */
+.toggle-switch .slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* Активное состояние */
+.toggle-switch input:checked + .slider {
+  background-color: #2ecc71;
+}
+
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+/* Наведение */
+.toggle-switch:hover .slider {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Текст */
+.toggle-label {
+  font-size: 0.95rem;
 }
 
 .add-field-btn,
@@ -110,10 +174,82 @@ body {
   flex: 1;
 }
 
-.checkbox {
-  margin-top: 10px;
-  font-size: 0.95rem;
+
+
+.field-row.damage-row {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
 }
+
+
+.select-wrapper { 
+  /*Если что убрать, если хочу на полую*/
+  width: 100%;
+  max-width: 250px;
+}
+
+
+@media (max-width: 800px) {
+  /* Урон и Тип урона в колонку */
+  .field-row.damage-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field-row.damage-row input {
+    width: 100%;
+  }
+
+  .field-row.damage-row .delete-btn {
+    align-self: flex-start;
+    margin-top: 5px;
+    font-size: 1.4rem;
+    padding: 2px 8px;
+    display: block;
+  }
+
+  /* Тип атаки и модификатор в колонку */
+  .attack-meta .field-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .attack-meta .field-row input,
+  .attack-meta .field-row select {
+    width: 100%;
+  }
+
+  
+}
+
+@media (max-width: 800px) {
+  .field-row,
+  .field-row.damage-row,
+  .attack-meta .field-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .field-row input,
+  .field-row select,
+  .attack-meta input,
+  .attack-meta select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .field-row.damage-row .delete-btn {
+    align-self: flex-start;
+    margin-top: 5px;
+    font-size: 1.4rem;
+    padding: 2px 8px;
+    display: block;
+  }
+}
+
+
+

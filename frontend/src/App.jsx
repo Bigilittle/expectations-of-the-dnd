@@ -1,5 +1,19 @@
 import { useState } from 'react';
 import './App.css';
+import Select from 'react-select';
+import './assets/fonts/fonts.css';
+
+
+const DAMAGE_TYPES = [
+    "Колющий", "Рубящий", "Дробящий", "Огненный", "Холод", "Молния",
+    "Кислотный", "Ядовитый", "Некротический", "Излучение", "Силовой",
+    "Психический", "Звуковой", "Магический"
+  ];
+  
+  const damageOptions = DAMAGE_TYPES.map((type) => ({
+    value: type,
+    label: type,
+  }));
 
 export default function App() {
     const [attacks, setAttacks] = useState([]);
@@ -58,7 +72,6 @@ export default function App() {
             return { ...attack, damageParams: updated };
         }));
     };
-
     return (
         <div className="container">
             <h1 className="title">Кидай кубы</h1>
@@ -93,7 +106,7 @@ export default function App() {
                                 />
                             </div>
 
-                            <label className="checkbox">
+                            <label className="toggle-switch">
                                 <input
                                     type="checkbox"
                                     checked={attack.hasExtra}
@@ -101,9 +114,12 @@ export default function App() {
                                         handleAttackChange(attack.id, 'hasExtra', e.target.checked)
                                     }
                                 />
-                                {attack.rollType === 'attack'
-                                    ? 'Преимущество на атаку'
-                                    : 'Половина урона при провале'}
+                                <span className="slider" />
+                                <span className="toggle-label">
+                                    {attack.rollType === 'attack'
+                                        ? 'Преимущество на атаку'
+                                        : 'Половина урона при провале'}
+                                </span>
                             </label>
                         </div>
 
@@ -124,14 +140,17 @@ export default function App() {
                                         handleParamChange(attack.id, index, 'damage', e.target.value)
                                     }
                                 />
-                                <input
-                                    type="text"
+                                <div className="select-wrapper">
+                                  <Select
+                                    options={damageOptions}
                                     placeholder="Тип урона"
-                                    value={param.type}
-                                    onChange={(e) =>
-                                        handleParamChange(attack.id, index, 'type', e.target.value)
+                                    value={damageOptions.find(o => o.value === param.type) || null}
+                                    onChange={(selected) =>
+                                      handleParamChange(attack.id, index, 'type', selected ? selected.value : '')
                                     }
-                                />
+                                    isClearable
+                                  />
+                                </div>
                                 <button
                                     className="delete-btn"
                                     onClick={() => removeDamageParam(attack.id, index)}
