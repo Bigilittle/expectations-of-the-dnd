@@ -1,0 +1,255 @@
+body {
+  margin: 0;
+  font-family: 'Lora', sans-serif;
+  background: linear-gradient(to bottom right, white, orange);
+  min-height: 100vh;
+}
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'ElMessiri', 'Lora' ,sans-serif;
+}
+
+.attack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.attack-block {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.field-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.field-row input,
+.field-row select,
+.attack-meta input,
+.attack-meta select {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.field-row input:focus,
+.field-row select:focus,
+.attack-meta input:focus,
+.attack-meta select:focus {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.3);
+}
+.toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 10px;
+}
+
+/* Скрываем нативный input */
+.toggle-switch input[type="checkbox"] {
+  display: none;
+}
+
+/* Слайдер-переключатель */
+.toggle-switch .slider {
+  width: 40px;
+  height: 22px;
+  background-color: #ccc;
+  border-radius: 999px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+/* Кружочек */
+.toggle-switch .slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* Активное состояние */
+.toggle-switch input:checked + .slider {
+  background-color: #2ecc71;
+}
+
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(18px);
+}
+
+/* Наведение */
+.toggle-switch:hover .slider {
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Текст */
+.toggle-label {
+  font-size: 0.95rem;
+}
+
+.add-field-btn,
+.add-btn,
+.send-btn {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #ff8c00;
+  color: white;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.2s ease;
+}
+
+.add-field-btn:hover,
+.add-btn:hover,
+.send-btn:hover {
+  background-color: #e57700;
+}
+
+.add-wrapper,
+.send-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+
+.damage-row {
+  align-items: center;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #cc0000;
+  transition: color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #ff0000;
+}
+
+
+.attack-meta {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
+}
+
+.attack-meta select,
+.attack-meta input[type="number"] {
+  padding: 8px;
+  font-size: 1rem;
+  flex: 1;
+}
+
+
+
+.field-row.damage-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+
+.select-wrapper { 
+  /*Если что убрать, если хочу на полую*/
+  width: 100%;
+  max-width: 250px;
+}
+
+
+@media (max-width: 800px) {
+  /* Урон и Тип урона в колонку */
+  .field-row.damage-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .field-row.damage-row input {
+    width: 100%;
+  }
+
+  .field-row.damage-row .delete-btn {
+    align-self: flex-start;
+    margin-top: 5px;
+    font-size: 1.4rem;
+    padding: 2px 8px;
+    display: block;
+  }
+
+  /* Тип атаки и модификатор в колонку */
+  .attack-meta .field-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .attack-meta .field-row input,
+  .attack-meta .field-row select {
+    width: 100%;
+  }
+
+  
+}
+
+@media (max-width: 800px) {
+  .field-row,
+  .field-row.damage-row,
+  .attack-meta .field-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .field-row input,
+  .field-row select,
+  .attack-meta input,
+  .attack-meta select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .field-row.damage-row .delete-btn {
+    align-self: flex-start;
+    margin-top: 5px;
+    font-size: 1.4rem;
+    padding: 2px 8px;
+    display: block;
+  }
+}
+
+
+
